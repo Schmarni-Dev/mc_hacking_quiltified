@@ -34,19 +34,19 @@ public class Schmacks implements ClientModInitializer {
 	}
 	@Override
 	public void onInitializeClient(ModContainer mod) {
-		// initialize_base_modules();
-		// ClientTickEvents.END.register((client) -> {
-		// 	if (client.player == null)
-		// 		return;
-		// 	TICK_COUNTER++;
-		// 	for (Runnable task : RUN_NEXT_TICK) {
-		// 		task.run();
-		// 	}
-		// 	RUN_NEXT_TICK.clear();
-		// 	for (var hack : HACKS) {
-		// 		run_hack(hack);
-		// 	}
-		// });
+		initialize_base_modules();
+		ClientTickEvents.END.register((client) -> {
+			if (client.player == null)
+				return;
+			TICK_COUNTER++;
+			for (Runnable task : RUN_NEXT_TICK) {
+				task.run();
+			}
+			RUN_NEXT_TICK.clear();
+			for (var hack : HACKS) {
+				run_hack(hack);
+			}
+		});
 	}
 
 	private void run_hack(IHack hack) {

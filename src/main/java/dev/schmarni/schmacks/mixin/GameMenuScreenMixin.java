@@ -21,8 +21,8 @@ public class GameMenuScreenMixin extends Screen {
 
 	@Inject(method = "init", at = @At("HEAD"))
 	public void onInit(CallbackInfo ci) {
-		this.addDrawableChild(ButtonWidget.builder(Text.literal("HIIIIII"),(btn)-> {
+		this.addDrawableChild(ButtonWidget.builder(Text.literal("Schmacks"),(btn)-> {
 			Schmacks.open_schmacks_screen();
-			}).position(10,10).build());
+			}).position(10,10).width((int)(ButtonWidget.DEFAULT_WIDTH * 0.5)).build());
 	}
 }
