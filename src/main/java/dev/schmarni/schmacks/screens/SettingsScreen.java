@@ -1,6 +1,7 @@
 package dev.schmarni.schmacks.screens;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.IntStream;
 
 import dev.schmarni.schmacks.IScreenOption;
@@ -22,7 +23,7 @@ import net.minecraft.client.gui.widget.ButtonListWidget;
  */
 public class SettingsScreen extends Screen {
 
-	private IScreenOption[] options;
+	private List<? extends IScreenOption> options;
 	private int buttons_per_colum;
 	private static final int BUTTON_WIDTH = (int) (ButtonWidget.DEFAULT_WIDTH);
 
@@ -34,7 +35,7 @@ public class SettingsScreen extends Screen {
 		return vec;
 	}
 
-	public SettingsScreen(IScreenOption[] options) {
+	public SettingsScreen(List<? extends IScreenOption> options) {
 		super(Text.literal("Schmacks!"));
 		this.options = options;
 	}
@@ -44,10 +45,9 @@ public class SettingsScreen extends Screen {
 		buttons_per_colum = (int) (getArea().height() / (ButtonWidget.DEFAULT_HEIGHT * 1.5));
 		Schmacks.LOGGER.info("buttons_per_colum" + String.valueOf(buttons_per_colum));
 		Schmacks.LOGGER.info("heigth" + String.valueOf(getArea().height()));
-		var buttons = new ButtonWidget[options.length];
-		for (int i = 0; i < options.length; i++) {
-			buttons[i] = make_button(options[i], i);
-			addDrawableChild(buttons[i]);
+		for (int i = 0; i < options.size(); i++) {
+
+			addDrawableChild(	make_button(options.get(i), i));
 			Schmacks.LOGGER.info(String.valueOf(i));
 		}
 

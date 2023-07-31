@@ -24,28 +24,29 @@ public class Schmacks implements ClientModInitializer {
 	// That way, it's clear which mod wrote info, warnings, and errors.
 	public static final Logger LOGGER = LoggerFactory.getLogger("Schmacks");
 	// private static final IHack[] HACKS = { new Flight(), new NoFallDamageThx() };
-	private static final IHack[] HACKS = { new Flight(), new NoFallDamageThx(), new NoFallDamageThx(),
-			new NoFallDamageThx(), new NoFallDamageThx(), new NoFallDamageThx(), new NoFallDamageThx(),
-			new NoFallDamageThx(), new NoFallDamageThx(), new NoFallDamageThx(), new NoFallDamageThx(),
-			new NoFallDamageThx(), };
+	private static List<IHack> HACKS = new LinkedList<>();
 	private static long TICK_COUNTER = 0;
 	private static List<Runnable> RUN_NEXT_TICK = new LinkedList<>();
 
+	private static void initialize_base_modules() {
+		HACKS.add(new Flight());
+		HACKS.add(new NoFallDamageThx());
+	}
 	@Override
 	public void onInitializeClient(ModContainer mod) {
-		LOGGER.info("Hello Quilt world from {}!", mod.metadata().name());
-		ClientTickEvents.END.register((client) -> {
-			if (client.player == null)
-				return;
-			TICK_COUNTER++;
-			for (Runnable task : RUN_NEXT_TICK) {
-				task.run();
-			}
-			RUN_NEXT_TICK.clear();
-			for (var hack : HACKS) {
-				run_hack(hack);
-			}
-		});
+		// initialize_base_modules();
+		// ClientTickEvents.END.register((client) -> {
+		// 	if (client.player == null)
+		// 		return;
+		// 	TICK_COUNTER++;
+		// 	for (Runnable task : RUN_NEXT_TICK) {
+		// 		task.run();
+		// 	}
+		// 	RUN_NEXT_TICK.clear();
+		// 	for (var hack : HACKS) {
+		// 		run_hack(hack);
+		// 	}
+		// });
 	}
 
 	private void run_hack(IHack hack) {
@@ -64,4 +65,12 @@ public class Schmacks implements ClientModInitializer {
 	public static void run_next_tick(Runnable task) {
 		RUN_NEXT_TICK.add(task);
 	}
+
+	public static IHack[] get_module_list_clone() {
+		return (IHack[])HACKS.toArray();
+	}
+	public static void add_module(IHack module){
+		HACKS.add(module);
+	}
+
 }
