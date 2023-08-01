@@ -28,7 +28,7 @@ public class Schmacks implements ClientModInitializer {
 	private static void initialize_base_modules() {
 		add_module(new Flight());
 		add_module(new NoFallDamageThx());
-		add_module(new FactorioAltMode());
+		// add_module(new FactorioAltMode());
 	}
 
 	@Override

@@ -15,6 +15,8 @@ public class Flight implements IHack {
 
 	@Override
 	public void slow_tick(int quaters) {
+		var mc = MinecraftClient.getInstance();
+		mc.player.getAbilities().allowFlying = true;
 		if (quaters == 3 && MinecraftClient.getInstance().player.getAbilities().flying)
 			server_no_kick_pls();
 	}
