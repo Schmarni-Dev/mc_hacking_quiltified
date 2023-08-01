@@ -13,4 +13,6 @@ public interface IHack extends IScreenOption {
 	 * is called every tick
 	 */
 	void tick();
+
+	default void init() {};
 }
