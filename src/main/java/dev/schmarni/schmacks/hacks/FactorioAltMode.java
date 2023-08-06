@@ -1,5 +1,7 @@
 package dev.schmarni.schmacks.hacks;
 
+import javax.swing.OverlayLayout;
+
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4d;
 import org.joml.Matrix4f;
@@ -22,14 +24,24 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.math.Vec3i;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
+import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.hud.InGameHud;
 import net.minecraft.client.render.Camera;
+import net.minecraft.client.render.OverlayTexture;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.render.RenderLayers;
+import net.minecraft.client.render.entity.DisplayEntityRenderer.ItemDisplayEntityRenderer;
 import net.minecraft.client.render.entity.DisplayEntityRenderer.TextDisplayEntityRenderer;
+import net.minecraft.client.render.item.ItemRenderer;
+import net.minecraft.client.render.model.BakedModelManager;
+import net.minecraft.client.render.model.json.ModelTransformationMode;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.entity.decoration.DisplayEntity.ItemDisplayEntity;
 import net.minecraft.entity.decoration.DisplayEntity.TextDisplayEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.VertexBuffer;
@@ -94,28 +106,64 @@ public class FactorioAltMode implements IHack {
 	public void tick() {
 	}
 
+	// private void render_overlay(WorldRenderContext ctx) {
+	// if (!active)
+	// return;
+	// var mc = MinecraftClient.getInstance();
+	//
+	// var vcp = ctx.consumers();
+	// var vc = vcp.getBuffer(RenderLayer.getGuiOverlay());
+	// var mat_stack = ctx.matrixStack();
+	// // mat.rotate((float) Math.PI, 0.0F, 1.0F, 0.0F);
+	// // mat.scale(-0.025F, -0.025F, -0.025F);
+	// var pos = ctx.gameRenderer().getCamera().getPos();
+	// mat_stack.translate(-pos.x, -pos.y, -pos.z);
+	// var mat = mat_stack.peek().getModel();
+	//
+	// vc.vertex(mat, 0f, 0f, 0f).color(0x0fff00ff).next();
+	// vc.vertex(mat, 0f, 1f, 0f).color(0x0fff00ff).next();
+	// vc.vertex(mat, 1f, 1f, 0f).color(0x0fff00ff).next();
+	// vc.vertex(mat, 1f, 0f, 0f).color(0x0fff00ff).next();
+	//
+	// mat.translate(new Vector3f((float) pos.x, (float) pos.y, (float) pos.z));
+	// mc.getItemRenderer().renderItem(Items.GRASS_BLOCK.getDefaultStack(),
+	// ModelTransformationMode.GUI, false,
+	// mat_stack, vcp, 15, OverlayTexture.DEFAULT_UV,
+	// mc.getItemRenderer().getModels().getModel(Items.GRASS_BLOCK));
+	// }
 	private void render_overlay(WorldRenderContext ctx) {
 		if (!active)
 			return;
-		var mc = MinecraftClient.getInstance();
-		var vc = ctx.consumers().getBuffer(RenderLayer.getGuiOverlay());
-		var mat = ctx.matrixStack().peek().getModel();
-		// mat.rotate((float) Math.PI, 0.0F, 1.0F, 0.0F);
-		// mat.scale(-0.025F, -0.025F, -0.025F);
-		var pos = ctx.gameRenderer().getCamera().getPos();
-		mat.translate(new Vector3f((float) -pos.x, (float) -pos.y, (float) -pos.z));
-		vc.vertex(mat, -1f, -1f, 0f).color(0xffffffff).next();
-		vc.vertex(mat, -1f, 1f, 0f).color(0xffffffff).next();
-		vc.vertex(mat, 1f, 1f, 0f).color(0xffffffff).next();
-		vc.vertex(mat, 1f, -1f, 0f).color(0xffffffff).next();
 
-		mat.translate(new Vector3f((float) pos.x, (float) pos.y, (float) pos.z));
+		var mc = MinecraftClient.getInstance();
+		var vcp = ctx.consumers();
+		var vc = vcp.getBuffer(RenderLayer.getGuiOverlay());
+		var mat_stack = ctx.matrixStack();
+
+		var pos = ctx.gameRenderer().getCamera().getPos();
+		mat_stack.push();
+		mat_stack.translate(-pos.x, -pos.y, -pos.z);
+		var mat = mat_stack.peek().getModel();
+
+		vc.vertex(mat, 0f, 0f, 0f).color(0xffffffff).next();
+		vc.vertex(mat, 0f, 1f, 0f).color(0xffffffff).next();
+		vc.vertex(mat, 1f, 1f, 0f).color(0xffffffff).next();
+		vc.vertex(mat, 1f, 0f, 0f).color(0xffffffff).next();
+
+		mat_stack.translate(0.5, 0.5, 0.5);
+
+		ItemStack grassBlockStack = new ItemStack(Items.GRASS_BLOCK);
+		mc.getItemRenderer().renderItem(grassBlockStack, ModelTransformationMode.FIXED, false,
+				mat_stack, vcp, 0, OverlayTexture.DEFAULT_UV,
+				mc.getItemRenderer().getModels().getModel(Items.GRASS_BLOCK));
+		mat_stack.translate(pos.x, pos.y, pos.z);
+		mat_stack.pop();
 	}
 
 	@Override
 	public void init() {
 
-		WorldRenderEvents.AFTER_TRANSLUCENT.register(this::render_overlay);
+		WorldRenderEvents.LAST.register(this::render_overlay);
 		Schmacks.LOGGER.info("Vision Pro");
 		// HudManager.register(new VisionScreen(new Identifier("wdasdwdsadwfgjjl",
 		// "odaiuuzhflkueuhle")));

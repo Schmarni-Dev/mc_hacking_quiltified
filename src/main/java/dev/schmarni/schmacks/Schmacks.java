@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import dev.schmarni.schmacks.hacks.FactorioAltMode;
 import dev.schmarni.schmacks.hacks.Flight;
 import dev.schmarni.schmacks.hacks.NoFallDamageThx;
+import dev.schmarni.schmacks.hacks.TheSun;
 import dev.schmarni.schmacks.screens.SettingsScreen;
 import net.minecraft.client.MinecraftClient;
 
@@ -29,6 +30,7 @@ public class Schmacks implements ClientModInitializer {
 		add_module(new Flight());
 		add_module(new NoFallDamageThx());
 		// add_module(new FactorioAltMode());
+		add_module(new TheSun());
 	}
 
 	@Override
